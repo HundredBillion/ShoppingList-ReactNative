@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Alert } from 'react-native';
 import Header from './components/Header'
 import ListItem from './components/ListItem';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import AddItem from './components/AddItem';
+import { v4 as uuidv4 } from 'uuid';
 
 const App = () => {
   const [items, setItems] = useState([
-    { id: 1, text: 'Milk' },
-    { id: 2, text: 'Eggs' },
-    { id: 3, text: 'Bread' },
-    { id: 4, text: 'Juice' },
-    { id: 5, text: 'Rice' },
+    { id: uuidv4(), text: 'Milk' },
+    { id: uuidv4(), text: 'Eggs' },
+    { id: uuidv4(), text: 'Bread' },
+    { id: uuidv4(), text: 'Juice' },
+    { id: uuidv4(), text: 'Rice' },
   ]);
 
   const deleteItem = (id) => {
@@ -18,13 +19,24 @@ const App = () => {
       return prevItems.filter(item => item.id != id)
     });
   }
+  const addItem = (text) => {
+    if (!text) {
+      Alert.alert('Error', 'Please enter an item', { text: 'Ok' });
+    } else {
+      setItems(prevItems => {
+        return [{ id: uuidv4(), text }, ...prevItems];
+      });
+
+    }
+  }
 
   return (
     <View style={styles.container}>
       <Header />
+      <AddItem addItem={addItem} />
       <FlatList
         data={items}
-        renderItem={({ item }) => <ListItem item={item} />}
+        renderItem={({ item }) => <ListItem item={item} deleteItem={deleteItem} />}
       />
     </View>
   );
